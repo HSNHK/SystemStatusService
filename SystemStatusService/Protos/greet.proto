@@ -4,18 +4,27 @@ option csharp_namespace = "SystemStatusService";
 
 package greet;
 
-// The greeting service definition.
 service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply);
+ rpc info (info_request) returns (response);
+ rpc process (process_request) returns (response);
+ rpc command (command_request) returns (response);
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+
+message info_request{
+	string token=1;
 }
 
-// The response message containing the greetings.
-message HelloReply {
-  string message = 1;
+message process_request{
+	string token=1;
+}
+
+message command_request{
+	string token=1;
+	string cmd=2;
+}
+
+message response{
+	bool status=1;
+	string message=2;
 }
