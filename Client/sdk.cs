@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Grpc.Net.Client;
-using SystemStatusService;
+﻿using Grpc.Net.Client;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using SystemStatusService;
 namespace Client
 {
     class sdk
@@ -20,32 +18,53 @@ namespace Client
             this.Client = new Greeter.GreeterClient(this.Channel);
         }
 
-        public Dictionary<string,string> Info()
+        public (string message,bool status) login()
         {
-            var response = this.Client.info(new info_request
+            var response = this.Client.login(new login_request
             {
                 Token = this.Token
             });
-            return JsonConvert.DeserializeObject<Dictionary<string,string>>(response.Message);
-        }
+            return (response.Message, response.Status);
+        } 
 
-        public List<Dictionary<int, string>> Process()
+        public (Dictionary<string, string> value,bool status) Info()
         {
-            var response = this.Client.process(new process_request
+            var response = this.Client.info(new login_request
             {
                 Token = this.Token
             });
-            return JsonConvert.DeserializeObject<List<Dictionary<int, string>>>(response.Message);
+            if (response.Status)
+            {
+                return (JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Message),true);
+            }
+            return (null,false);
         }
 
-        public Dictionary<string,string> Command(string cmd)
+        public (List<Dictionary<int, string>> value,bool status) Process()
+        {
+            var response = this.Client.process(new login_request
+            {
+                Token = this.Token
+            });
+            if (response.Status)
+            {
+                return (JsonConvert.DeserializeObject<List<Dictionary<int, string>>>(response.Message),true);
+            }
+            return (null,false);
+        }
+
+        public (Dictionary<string, string> value,bool status) Command(string cmd)
         {
             var response = this.Client.command(new command_request
             {
                 Token = this.Token,
                 Cmd = cmd
             });
-            return JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Message);
+            if (response.Status)
+            {
+                return (JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Message),true);
+            }
+            return (null,false);
         }
     }
 }
