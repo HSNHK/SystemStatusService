@@ -5,18 +5,14 @@ option csharp_namespace = "SystemStatusService";
 package greet;
 
 service Greeter {
- rpc info (info_request) returns (response);
- rpc process (process_request) returns (response);
+ rpc info (login_request) returns (response);
+ rpc process (login_request) returns (response);
  rpc command (command_request) returns (response);
+ rpc login (login_request) returns (response);
 }
 
-
-message info_request{
-	string token=1;
-}
-
-message process_request{
-	string token=1;
+message login_request{
+    string token=1;
 }
 
 message command_request{
