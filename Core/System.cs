@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-
 namespace Core
 {
     public class SystemInformation
     {
-        public Dictionary<string,string> Info()
+        public Dictionary<string, string> Info()
         {
             Dictionary<string, string> informations = new Dictionary<string, string>() {
                 {"user",Environment.UserName },
@@ -20,17 +19,17 @@ namespace Core
             return informations;
         }
 
-        public List<string> SystemProcess()
+        public List<Dictionary<int, string>> SystemProcess()
         {
-            List<string> ProcessList = new List<string>();
+            List<Dictionary<int, string>> ProcessList = new List<Dictionary<int, string>>();
             foreach (var item in Process.GetProcesses())
             {
-                ProcessList.Add($"ID :{item.Id} | Name :{item.ProcessName}");
+                ProcessList.Add(new Dictionary<int, string>() { { item.Id, item.ProcessName } });
             }
             return ProcessList;
         }
 
-        public string Command(string cmd)
+        public Dictionary<string,string> Command(string cmd)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd");
             processStartInfo.RedirectStandardInput = true;
@@ -40,7 +39,7 @@ namespace Core
             Process ps = Process.Start(processStartInfo);
             ps.StandardInput.WriteLine(cmd);
             ps.StandardInput.WriteLine(@"exit");
-            return ps.StandardOutput.ReadToEnd();
+            return new Dictionary<string, string> { { cmd, ps.StandardOutput.ReadToEnd() } };
         }
     }
 }
